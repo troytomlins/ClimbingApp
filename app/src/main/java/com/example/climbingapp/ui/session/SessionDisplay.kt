@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.climbingapp.init.ClimbInit
 import com.example.climbingapp.model.session.Session
 import com.example.climbingapp.ui.theme.ClimbingAppTheme
+import kotlin.math.roundToInt
 
 /**
  * Display for sessions (current & past)
@@ -34,16 +35,16 @@ fun SessionDisplay(session: Session, modifier: Modifier = Modifier) {
     }
 }
 
-fun calculateAverageGrade(session: Session): Double {
+fun calculateAverageGrade(session: Session): Int {
     var count = 0.00
     var total = 0.00
     session.getClimbsInSession().forEach {
         if (it.sent) {
-            count += count
+            count += 1
             total += it.route.grade
         }
     }
-    return (total / count)
+    return (total / count).roundToInt()
 }
 
 @Composable

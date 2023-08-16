@@ -1,5 +1,10 @@
 package com.example.climbingapp.model.climbs
 
+/**
+ * Model class for Gym
+ * @param location Location of Gym
+ * @param name Name of Gym
+ */
 class Gym(
     var location: Location,
     var name: String

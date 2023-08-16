@@ -24,7 +24,7 @@ fun SessionDisplay(session: Session, modifier: Modifier = Modifier) {
     ) {
         Text(text = "Climbs Attempted: ${session.getClimbsInSession().size}")
         Text(
-            text = "Climbs Completed: ${getClimbsCompleted(session)}"
+            text = "Climbs Completed: ${session.getNumClimbsCompleted()}"
         )
         Text(
             text = "Highest Grade: ${session.getHighestGradeInSession()}"
@@ -44,16 +44,6 @@ fun calculateAverageGrade(session: Session): Double {
         }
     }
     return (total / count)
-}
-
-fun getClimbsCompleted(session: Session): Int {
-    var count = 0
-    session.getClimbsInSession().forEach {
-        if (it.sent) {
-            count += count
-        }
-    }
-    return count
 }
 
 @Composable

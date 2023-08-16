@@ -27,4 +27,14 @@ class Session(
     fun getHighestGradeInSession(): Int {
         return highestGrade
     }
+
+    fun getNumClimbsCompleted(): Int {
+        var count = 0
+        climbs.forEach {
+            if (it.sent) {
+                count += 1
+            }
+        }
+        return count
+    }
 }

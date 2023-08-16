@@ -14,4 +14,8 @@ data class Climb(
     val rope: Rope,
     val route: Route,
     val sent: Boolean
-)
+) {
+    fun display(): String {
+        return "Rope: ${rope.name} \n Color: ${route.color} \nGrade: ${route.grade} \nSent: ${sent}"
+    }
+}

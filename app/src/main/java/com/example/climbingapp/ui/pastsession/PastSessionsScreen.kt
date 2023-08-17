@@ -17,11 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.climbingapp.R
+import com.example.climbingapp.ScreenTitle
 import com.example.climbingapp.init.ClimbInit
 import com.example.climbingapp.model.session.Session
 import com.example.climbingapp.ui.theme.ClimbingAppTheme
@@ -34,30 +33,7 @@ fun PastSessionsScreen(sessionUiState: PastSessionUiState, modifier: Modifier = 
     Column(
         modifier.fillMaxSize()
     ) {
-        Row(
-            modifier
-                .fillMaxWidth()
-                .fillMaxHeight(.2f)
-                .padding(20.dp)
-                .background(
-                    MaterialTheme.colorScheme.primaryContainer,
-                    MaterialTheme.shapes.small
-                )
-                .border(
-                    2.dp,
-                    MaterialTheme.colorScheme.onPrimaryContainer,
-                    MaterialTheme.shapes.small),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(id = R.string.past_sessions),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 20.dp),
-                textAlign = TextAlign.Center
-            )
-        }
+        ScreenTitle(R.string.past_sessions, Modifier.fillMaxHeight(.2f))
 
         Row(
             modifier
@@ -67,17 +43,18 @@ fun PastSessionsScreen(sessionUiState: PastSessionUiState, modifier: Modifier = 
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
+                verticalArrangement = Arrangement.Top,
+                modifier = Modifier.padding(0.dp, 8.dp)
             ) {
                 Row(
                     modifier = Modifier
                         .padding(8.dp)
                         .background(
-                            MaterialTheme.colorScheme.tertiaryContainer,
+                            MaterialTheme.colorScheme.secondaryContainer,
                             MaterialTheme.shapes.medium)
                         .border(
-                            2.dp,
-                            MaterialTheme.colorScheme.onTertiaryContainer,
+                            1.dp,
+                            MaterialTheme.colorScheme.secondary,
                             MaterialTheme.shapes.medium
                         )
                 ) {

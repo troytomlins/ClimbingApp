@@ -24,7 +24,7 @@ import kotlin.random.Random
 @Composable
 fun SessionDisplay(sessionUiState: SessionUiState, modifier: Modifier = Modifier) {
     Column(
-        modifier.fillMaxHeight(),
+        modifier,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Text(text = "Climbs Attempted: ${sessionUiState.attempted}")
@@ -35,7 +35,6 @@ fun SessionDisplay(sessionUiState: SessionUiState, modifier: Modifier = Modifier
             text = "Highest Grade: ${sessionUiState.highestGrade}"
         )
         Text(text = "Average Grade: ${sessionUiState.averageGrade}")
-        Text(text = "Last Climb: \n\n${sessionUiState.lastClimb}")
     }
 }
 

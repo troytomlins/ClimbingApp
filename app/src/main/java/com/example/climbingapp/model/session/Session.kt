@@ -1,7 +1,7 @@
 package com.example.climbingapp.model.session
 
 import com.example.climbingapp.model.climbs.Gym
-import java.util.Date
+import java.util.Calendar
 
 private val days = mutableListOf<String>(
     "Mon",
@@ -22,7 +22,7 @@ class Session(
 ) {
     private var climbs = mutableListOf<Climb>()
     private var highestGrade: Int = 0
-    private var date: Date = Date()
+    private var date: Calendar = Calendar.getInstance()
 
     fun addClimbToSession(climb: Climb) {
         climbs.add(climb)
@@ -39,16 +39,20 @@ class Session(
         return highestGrade
     }
 
-    fun getSessionDate(): Date {
+    fun getSessionDate(): Calendar {
         return date
     }
 
     fun getSessionDateString(): String {
-        var time: String = if (date.minutes < 10) {
-            "${date.hours}:0${date.minutes}"
+        var time: String = if (date.get(Calendar.MINUTE) < 10) {
+            "${date.get(Calendar.HOUR_OF_DAY)}:0${date.get(Calendar.MINUTE)}"
         } else {
-            "${date.hours}:${date.minutes}"
+            "${date.get(Calendar.HOUR_OF_DAY)}:${date.get(Calendar.MINUTE)}"
         }
-        return "$time ${days[date.day-1]}\n${date.date}/${date.month+1}"
+        return "$time ${days[date.get(Calendar.DAY_OF_WEEK)]}\n${date.get(Calendar.DAY_OF_MONTH)}/${date.get(Calendar.MONTH)}"
+    }
+
+    fun setSessionDate(newDate: Calendar) {
+        date = newDate
     }
 }

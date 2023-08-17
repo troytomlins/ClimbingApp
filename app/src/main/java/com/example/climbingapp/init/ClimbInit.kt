@@ -29,7 +29,7 @@ class ClimbInit {
         val session = Session(gym!!)
         gym!!.getRopes().forEach { rope ->
             rope.getRoutes().forEach { route ->
-                if (true) { // Ensures random selection each time
+                if (Random.nextBoolean()) { // Ensures random selection each time
                     session.addClimbToSession(
                         Climb(rope, route, Random.nextBoolean())
                     )

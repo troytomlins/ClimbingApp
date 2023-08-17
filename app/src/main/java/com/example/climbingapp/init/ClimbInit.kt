@@ -13,6 +13,9 @@ import kotlin.random.Random
  */
 class ClimbInit {
 
+    // gym for test data
+    private var gym: Gym? = null
+
     /**
      * Sets up a Session and returns it
      * with a random number of climbs
@@ -20,9 +23,11 @@ class ClimbInit {
      * @return Session
      */
     fun setUpSession(): Session {
-        val gym = setUpGymData()
-        val session = Session(gym)
-        gym.getRopes().forEach { rope ->
+        if (gym == null) {
+            gym = setUpGymData()
+        }
+        val session = Session(gym!!)
+        gym!!.getRopes().forEach { rope ->
             rope.getRoutes().forEach { route ->
                 if (true) { // Ensures random selection each time
                     session.addClimbToSession(
@@ -47,7 +52,8 @@ class ClimbInit {
         )
         val gym = Gym(
             location = location,
-            name = "Y Adventure Centre"
+            name = "Y Adventure Centre",
+            gymCode = "YAC"
         )
 
         gym.addRopeToGym(setUpRope("1"))

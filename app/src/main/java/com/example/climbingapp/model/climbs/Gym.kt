@@ -7,7 +7,8 @@ package com.example.climbingapp.model.climbs
  */
 class Gym(
     var location: Location,
-    var name: String
+    var name: String,
+    var gymCode: String
 ) {
 
     private val ropes: MutableList<Rope> = mutableListOf()
@@ -24,8 +25,9 @@ class Gym(
         return ropes
     }
 
-    fun updateGym(newLocation: Location, newName: String) {
+    fun updateGym(newLocation: Location, newName: String, newGymCode: String) {
         location = newLocation
         name = newName
+        gymCode = newGymCode
     }
 }

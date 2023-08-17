@@ -24,6 +24,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,8 +41,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.climbingapp.init.ClimbInit
 import com.example.climbingapp.model.session.Session
+import com.example.climbingapp.ui.pastsession.PastSessionsScreen
 import com.example.climbingapp.ui.session.CurrentSessionScreen
 import com.example.climbingapp.ui.session.StartSessionScreen
+import com.example.climbingapp.viewmodel.PastSessionViewModel
 import com.example.climbingapp.viewmodel.ProfileViewModel
 import com.example.climbingapp.viewmodel.SessionViewModel
 
@@ -73,6 +76,11 @@ fun ClimbingApp(
 
     val sessionViewModel: SessionViewModel = viewModel()
     val profileViewModel: ProfileViewModel = viewModel()
+    val pastSessionViewModel: PastSessionViewModel = viewModel()
+
+    if (TESTING) {
+        pastSessionViewModel.setUpTestData()
+    }
 
     Scaffold(
         topBar = {
@@ -98,6 +106,8 @@ fun ClimbingApp(
         }
     ) { contentPadding ->
         val sessionUiState by sessionViewModel.uiState.collectAsState()
+        val pastSessionUiState by pastSessionViewModel.uiState.collectAsState()
+
         NavHost(
             navController = navController,
             startDestination = ClimbingAppScreen.StartSession.name,
@@ -108,9 +118,9 @@ fun ClimbingApp(
                 StartSessionScreen(
                     onStart = {
                         var newSession: Session = if (TESTING) {
-                            ClimbInit().setUpSession()
+                            ClimbInit().setUpSession() // full session
                         } else {
-                            Session(ClimbInit().setUpGymData())
+                            Session(ClimbInit().setUpGymData()) // empty session
                         }
                         sessionViewModel.setUpSession(newSession)
                         navController.navigate(route = ClimbingAppScreen.CurrentSession.name)
@@ -139,7 +149,9 @@ fun ClimbingApp(
 
             // Past Sessions Screen
             composable(route = ClimbingAppScreen.PastSessions.name) {
-
+                PastSessionsScreen(
+                    sessionUiState = pastSessionUiState
+                )
             }
 
             // Display Completed(past) Session
@@ -176,9 +188,11 @@ enum class ClimbingAppScreen(@StringRes val title: Int) {
 fun ClimbingAppBar(modifier: Modifier = Modifier) {
     CenterAlignedTopAppBar(
         title = {
-            Text(text = stringResource(id = R.string.app_name))
+            Text(text = stringResource(id = R.string.app_name),
+                style = MaterialTheme.typography.headlineMedium)
         },
-        modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(),
+        modifier = modifier.background(MaterialTheme.colorScheme.primaryContainer)
     )
 }
 
@@ -197,13 +211,22 @@ fun ClimbingAppNavBar(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = onNavListPress, Modifier.fillMaxWidth(.33f).fillMaxHeight()) {
+            IconButton(onClick = onNavListPress,
+                Modifier
+                    .fillMaxWidth(.33f)
+                    .fillMaxHeight()) {
                 Icon(Icons.Filled.List, contentDescription = null, Modifier.padding(4.dp))
             }
-            IconButton(onClick = onNavHomePress,  Modifier.fillMaxWidth(.5f).fillMaxHeight()) {
+            IconButton(onClick = onNavHomePress,
+                Modifier
+                    .fillMaxWidth(.5f)
+                    .fillMaxHeight()) {
                 Icon(Icons.Filled.Home, contentDescription = null, Modifier.padding(4.dp))
             }
-            IconButton(onClick = onNavProfilePress,  Modifier.fillMaxWidth(1f).fillMaxHeight()) {
+            IconButton(onClick = onNavProfilePress,
+                Modifier
+                    .fillMaxWidth(1f)
+                    .fillMaxHeight()) {
                 Icon(Icons.Filled.Person, contentDescription = null, Modifier.padding(4.dp))
             }
         }

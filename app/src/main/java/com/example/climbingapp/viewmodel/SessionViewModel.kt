@@ -14,6 +14,8 @@ class SessionViewModel: ViewModel() {
     private var gym = ClimbInit().setUpGymData()
     private var activeSession = Session(gym)
 
+    private var active: Boolean = false
+
     private val _uiState = MutableStateFlow(SessionUiState())
     val uiState: StateFlow<SessionUiState> = _uiState.asStateFlow()
 
@@ -24,6 +26,7 @@ class SessionViewModel: ViewModel() {
         activeSession = session
         gym = session.gym
         resetUi()
+        active = true
         return this
     }
 
@@ -108,5 +111,17 @@ class SessionViewModel: ViewModel() {
             return ""
         }
         return activeSession.getClimbsInSession().last().display()
+    }
+
+    /**
+     * Sets the current session as inactive
+     * TODO: send session data
+     */
+    fun endSession() {
+        active = false
+    }
+
+    fun isActive(): Boolean {
+        return active
     }
 }

@@ -26,8 +26,9 @@ fun StartSessionScreen(onStart: () -> Unit, modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        val gymString = "YMCA Adventure Centre \nChristchurch, New Zealand" // Temp
         Text(
-            text = "Current Location: ",
+            text = "Current Location:\n${gymString}",
             modifier = Modifier
         )
         Spacer(

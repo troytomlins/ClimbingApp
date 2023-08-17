@@ -4,18 +4,34 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.climbingapp.ui.theme.ClimbingAppTheme
 import androidx.navigation.NavHostController
@@ -29,6 +45,7 @@ import com.example.climbingapp.ui.session.StartSessionScreen
 import com.example.climbingapp.viewmodel.ProfileViewModel
 import com.example.climbingapp.viewmodel.SessionViewModel
 
+val TESTING = true
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +76,25 @@ fun ClimbingApp(
 
     Scaffold(
         topBar = {
-            ClimbingAppBar()
+            ClimbingAppBar(modifier)
+        },
+        bottomBar = {
+            ClimbingAppNavBar(
+                onNavListPress = {
+                    navController.navigate(route = ClimbingAppScreen.PastSessions.name)
+                },
+                onNavHomePress = {
+                    if (sessionViewModel.isActive()) {
+                        navController.navigate(route = ClimbingAppScreen.CurrentSession.name)
+                    } else {
+                        navController.navigate(route = ClimbingAppScreen.StartSession.name)
+                    }
+                },
+                onNavProfilePress = {
+                    navController.navigate(route = ClimbingAppScreen.Profile.name)
+                },
+                modifier = modifier
+            )
         }
     ) { contentPadding ->
         val sessionUiState by sessionViewModel.uiState.collectAsState()
@@ -70,11 +105,17 @@ fun ClimbingApp(
         ) {
             // Start Session Screen DEFAULT
             composable(route = ClimbingAppScreen.StartSession.name) {
-                StartSessionScreen(onStart = {
-                    val newSession = Session(ClimbInit().setUpGymData())
-                    sessionViewModel.setUpSession(newSession)
-                    navController.navigate(route = ClimbingAppScreen.CurrentSession.name)
-                })
+                StartSessionScreen(
+                    onStart = {
+                        var newSession: Session = if (TESTING) {
+                            ClimbInit().setUpSession()
+                        } else {
+                            Session(ClimbInit().setUpGymData())
+                        }
+                        sessionViewModel.setUpSession(newSession)
+                        navController.navigate(route = ClimbingAppScreen.CurrentSession.name)
+                    }
+                )
             }
 
             // Current Session Screen
@@ -83,8 +124,13 @@ fun ClimbingApp(
                     sessionUiState = sessionUiState,
                     addClimb = {
                         navController.navigate(route = ClimbingAppScreen.AddClimb.name)
+                    },
+                    endSession = {
+                        sessionViewModel.endSession()
+                        navController.navigate(route = ClimbingAppScreen.StartSession.name)
                     })
             }
+
 
             // Add new Climb Screen
             composable(route = ClimbingAppScreen.AddClimb.name) {
@@ -125,23 +171,49 @@ enum class ClimbingAppScreen(@StringRes val title: Int) {
     GymProfile(title = R.string.gym_profile)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ClimbingAppBar(modifier: Modifier = Modifier) {
-
+    CenterAlignedTopAppBar(
+        title = {
+            Text(text = stringResource(id = R.string.app_name))
+        },
+        modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+    )
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun ClimbingAppNavBar(
+    onNavListPress: () -> Unit = {},
+    onNavHomePress: () -> Unit = {},
+    onNavProfilePress:() -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    NavigationBar(
+        modifier.fillMaxWidth(),
+    ) {
+        Row(
+            Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onNavListPress, Modifier.fillMaxWidth(.33f).fillMaxHeight()) {
+                Icon(Icons.Filled.List, contentDescription = null, Modifier.padding(4.dp))
+            }
+            IconButton(onClick = onNavHomePress,  Modifier.fillMaxWidth(.5f).fillMaxHeight()) {
+                Icon(Icons.Filled.Home, contentDescription = null, Modifier.padding(4.dp))
+            }
+            IconButton(onClick = onNavProfilePress,  Modifier.fillMaxWidth(1f).fillMaxHeight()) {
+                Icon(Icons.Filled.Person, contentDescription = null, Modifier.padding(4.dp))
+            }
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun ClimbingAppPreview() {
     ClimbingAppTheme {
-        Greeting("Android")
+        ClimbingApp()
     }
 }

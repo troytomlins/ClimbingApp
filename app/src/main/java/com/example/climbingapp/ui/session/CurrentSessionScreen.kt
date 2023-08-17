@@ -5,13 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,29 +28,43 @@ import com.example.climbingapp.viewmodel.SessionViewModel
 @Composable
 fun CurrentSessionScreen(
     addClimb: () -> Unit,
+    endSession: () -> Unit,
     sessionUiState : SessionUiState,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.SpaceEvenly
     ) {
         Row(
-            modifier
-                .fillMaxWidth()
-                .requiredHeight(400.dp),
-            horizontalArrangement = Arrangement.Center
+            modifier.fillMaxWidth()
         ) {
-            SessionDisplay(sessionUiState)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .requiredHeight(400.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    SessionDisplay(sessionUiState)
+                }
+                Button(onClick = { /*TODO*/ }) {
+                    Text(text = "View completed climbs")
+                }
+            }
         }
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "View completed climbs")
-        }
-        Spacer(Modifier.height(8.dp))
         Row(
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth()
         ) {
+            OutlinedButton(onClick = endSession) {
+                Text(text = "End Session")
+            }
             Button(onClick = addClimb) {
                 Text(text = "Add Climb")
             }
@@ -66,6 +80,6 @@ fun CurrentSessionPreview() {
         val session = ClimbInit().setUpSession()
         val sessionViewModel = SessionViewModel()
         sessionViewModel.setUpSession(session)
-        CurrentSessionScreen({}, sessionViewModel.uiState.value, Modifier.background(MaterialTheme.colorScheme.background))
+        CurrentSessionScreen({}, {}, sessionViewModel.uiState.value, Modifier.background(MaterialTheme.colorScheme.background))
     }
 }

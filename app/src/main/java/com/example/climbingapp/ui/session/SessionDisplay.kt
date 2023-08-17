@@ -35,7 +35,7 @@ fun SessionDisplay(sessionUiState: SessionUiState, modifier: Modifier = Modifier
             text = "Highest Grade: ${sessionUiState.highestGrade}"
         )
         Text(text = "Average Grade: ${sessionUiState.averageGrade}")
-        Text(text = "Last Climb: \n${sessionUiState.lastClimb}")
+        Text(text = "Last Climb: \n\n${sessionUiState.lastClimb}")
     }
 }
 

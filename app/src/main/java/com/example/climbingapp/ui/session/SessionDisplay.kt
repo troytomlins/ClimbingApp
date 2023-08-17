@@ -10,41 +10,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.climbingapp.init.ClimbInit
+import com.example.climbingapp.model.climbs.Gym
+import com.example.climbingapp.model.climbs.Location
 import com.example.climbingapp.model.session.Session
 import com.example.climbingapp.ui.theme.ClimbingAppTheme
+import com.example.climbingapp.viewmodel.SessionViewModel
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 /**
  * Display for sessions (current & past)
  */
 @Composable
-fun SessionDisplay(session: Session, modifier: Modifier = Modifier) {
+fun SessionDisplay(sessionUiState: SessionUiState, modifier: Modifier = Modifier) {
     Column(
         modifier.fillMaxHeight(),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-        Text(text = "Climbs Attempted: ${session.getClimbsInSession().size}")
+        Text(text = "Climbs Attempted: ${sessionUiState.attempted}")
         Text(
-            text = "Climbs Completed: ${session.getNumClimbsCompleted()}"
+            text = "Climbs Completed: ${sessionUiState.completed}"
         )
         Text(
-            text = "Highest Grade: ${session.getHighestGradeInSession()}"
+            text = "Highest Grade: ${sessionUiState.highestGrade}"
         )
-        Text(text = "Average Grade: ${calculateAverageGrade(session)}")
-        Text(text = "Last Climb: \n${session.getClimbsInSession().last().display()}")
+        Text(text = "Average Grade: ${sessionUiState.averageGrade}")
+        Text(text = "Last Climb: \n${sessionUiState.lastClimb}")
     }
-}
-
-fun calculateAverageGrade(session: Session): Int {
-    var count = 0.00
-    var total = 0.00
-    session.getClimbsInSession().forEach {
-        if (it.sent) {
-            count += 1
-            total += it.route.grade
-        }
-    }
-    return (total / count).roundToInt()
 }
 
 @Composable
@@ -52,7 +44,12 @@ fun calculateAverageGrade(session: Session): Int {
 fun SessionPreview() {
     ClimbingAppTheme {
         SessionDisplay(
-            ClimbInit().setUpSession(),
+            SessionUiState(
+                attempted = Random.nextInt(10, 12),
+                completed = Random.nextInt(8,10),
+                highestGrade = Random.nextInt(19, 25),
+                averageGrade = Random.nextInt(16, 19)
+            ),
             Modifier.background(Color.White)
         )
     }

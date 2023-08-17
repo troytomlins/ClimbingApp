@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Climbing App</string>
+    <string name="start_session">Start Session</string>
+    <string name="current_session">Current Session</string>
+    <string name="past_sessions">Past Sessions</string>
+    <string name="completed_session">Completed Session</string>
+    <string name="gym_profile">Gym Profile</string>
+    <string name="user_profile">User Profile</string>
+    <string name="add_climb">Add Climb</string>
+</resources>

@@ -7,16 +7,27 @@ import com.example.climbingapp.viewmodel.SessionViewModel
 
 data class PastSessionUiState(
     var sessions: MutableList<Session> = mutableListOf(),
-    val activeSession: Session? = null,
-    val activeClimb: Climb? = null
+    var activeSession: Session? = null,
+    var activeClimb: Climb? = null
 ) {
+    /**
+     * Converts active session into SessionUiState
+     */
     fun convertToSessionUiState(): SessionUiState? {
-        if (activeSession != null) {
+        return if (activeSession != null) {
             val viewModel = SessionViewModel()
-            viewModel.setUpSession(activeSession)
-            return viewModel.uiState.value
+            viewModel.setUpSession(activeSession!!)
+            viewModel.uiState.value
         } else {
-            return null
+            null
         }
+    }
+
+    /**
+     * Sets the active session
+     * @param session Session to set as active
+     */
+    fun setActiveSession(session: Session) {
+        activeSession = session
     }
 }

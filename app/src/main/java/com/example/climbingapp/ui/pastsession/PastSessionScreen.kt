@@ -16,9 +16,37 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.climbingapp.init.ClimbInit
 import com.example.climbingapp.ui.session.SessionDisplay
+import com.example.climbingapp.viewmodel.PastSessionUiStatus
 
 @Composable
-fun PastSessionScreen(uiState: PastSessionUiState,returnToPastSessions: () -> Unit, modifier: Modifier = Modifier) {
+fun PastSessionScreen(
+    uiState: PastSessionUiState,
+    uiStatus: PastSessionUiStatus,
+    returnToPastSessions: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    when (uiStatus) {
+        is PastSessionUiStatus.Loading -> null // TODO: Add loading screen
+        is PastSessionUiStatus.Success -> {
+            uiState.setActiveSession(uiStatus.pastSession)
+            PastSessionScreenContent(
+                uiState,
+                returnToPastSessions,
+                modifier
+            )
+        }
+        is PastSessionUiStatus.Error -> {
+            uiState.activeSession = null
+            returnToPastSessions()
+        }
+    }
+}
+@Composable
+fun PastSessionScreenContent(
+    uiState: PastSessionUiState,
+    returnToPastSessions: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     if(uiState.activeSession == null) {
         returnToPastSessions()
     } else {
@@ -49,5 +77,5 @@ fun PastSessionPreview() {
     val uiState = PastSessionUiState(
         activeSession = session
     )
-    PastSessionScreen(uiState, {}, Modifier.background(Color.White))
+    PastSessionScreen(uiState, PastSessionUiStatus.Success(session), {}, Modifier.background(Color.White))
 }

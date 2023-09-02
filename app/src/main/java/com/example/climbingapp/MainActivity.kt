@@ -44,6 +44,7 @@ import com.example.climbingapp.model.session.Session
 import com.example.climbingapp.ui.pastsession.PastSessionsScreen
 import com.example.climbingapp.ui.session.CurrentSessionScreen
 import com.example.climbingapp.ui.session.StartSessionScreen
+import com.example.climbingapp.viewmodel.PastSessionUiStatus
 import com.example.climbingapp.viewmodel.PastSessionViewModel
 import com.example.climbingapp.viewmodel.ProfileViewModel
 import com.example.climbingapp.viewmodel.SessionViewModel
@@ -80,6 +81,8 @@ fun ClimbingApp(
 
     if (TESTING) {
         pastSessionViewModel.setUpTestData()
+    } else {
+        pastSessionViewModel.getPastSessionData()
     }
 
     Scaffold(
@@ -150,11 +153,12 @@ fun ClimbingApp(
             // Past Sessions Screen
             composable(route = ClimbingAppScreen.PastSessions.name) {
                 PastSessionsScreen(
-                    sessionUiState = pastSessionUiState
+                    uiState = pastSessionUiState,
+                    uiStatus = PastSessionUiStatus.Loading
                 )
             }
 
-            // Display Completed(past) Session
+            // Display Completed(past) Session ?????????????? like above?
             composable(route = ClimbingAppScreen.CompletedSession.name) {
 
             }

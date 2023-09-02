@@ -24,47 +24,72 @@ import com.example.climbingapp.ScreenTitle
 import com.example.climbingapp.init.ClimbInit
 import com.example.climbingapp.model.session.Session
 import com.example.climbingapp.ui.theme.ClimbingAppTheme
+import com.example.climbingapp.viewmodel.PastSessionUiStatus
 
 /**
  * Display for showing past sessions as scrolling list
  */
 @Composable
-fun PastSessionsScreen(sessionUiState: PastSessionUiState, modifier: Modifier = Modifier) {
+fun PastSessionsScreen(
+    uiState: PastSessionUiState,
+    uiStatus: PastSessionUiStatus,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier.fillMaxSize()
     ) {
-        ScreenTitle(R.string.past_sessions, Modifier.fillMaxHeight(.2f))
+        when (uiStatus) {
+            is PastSessionUiStatus.Loading -> null // TODO: Add loading screen
+            is PastSessionUiStatus.Success ->
+                PastSessionsScreenContent(
+                    uiState,
+                    modifier
+                )
+            is PastSessionUiStatus.Error -> null // TODO: Add error screen
+        }
+    }
+}
 
-        Row(
-            modifier
-                .fillMaxSize()
-                .padding(12.dp),
-            verticalAlignment = Alignment.Top
+@Composable
+fun PastSessionsScreenContent(
+    uiState: PastSessionUiState,
+    modifier: Modifier = Modifier
+) {
+    ScreenTitle(R.string.past_sessions, Modifier.fillMaxHeight(.2f))
+
+    Row(
+        modifier
+            .fillMaxSize()
+            .padding(12.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top,
+            modifier = Modifier.padding(0.dp, 8.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top,
-                modifier = Modifier.padding(0.dp, 8.dp)
+            Row(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .background(
+                        MaterialTheme.colorScheme.secondaryContainer,
+                        MaterialTheme.shapes.medium
+                    )
+                    .border(
+                        1.dp,
+                        MaterialTheme.colorScheme.secondary,
+                        MaterialTheme.shapes.medium
+                    )
             ) {
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .background(
-                            MaterialTheme.colorScheme.secondaryContainer,
-                            MaterialTheme.shapes.medium)
-                        .border(
-                            1.dp,
-                            MaterialTheme.colorScheme.secondary,
-                            MaterialTheme.shapes.medium
-                        )
-                ) {
-                    if (sessionUiState.sessions.size == 0) {
-                        Text(text = "No Past Sessions :(", style = MaterialTheme.typography.headlineSmall)
-                    } else {
-                        LazyColumn() {
-                            items(sessionUiState.sessions.size) {
-                                PastSessionCard(session = sessionUiState.sessions[it], Modifier)
-                            }
+                if (uiState.sessions.size == 0) {
+                    Text(
+                        text = "No Past Sessions :(",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                } else {
+                    LazyColumn() {
+                        items(uiState.sessions.size) {
+                            PastSessionCard(session = uiState.sessions[it], Modifier)
                         }
                     }
                 }
@@ -112,6 +137,6 @@ fun PastSessionsPreview() {
         val sessionUiState = PastSessionUiState(
             sessions = sessions
         )
-        PastSessionsScreen(sessionUiState, Modifier.background(MaterialTheme.colorScheme.background))
+        PastSessionsScreen(sessionUiState, PastSessionUiStatus.Success(sessions.get(0)), Modifier.background(MaterialTheme.colorScheme.background))
     }
 }

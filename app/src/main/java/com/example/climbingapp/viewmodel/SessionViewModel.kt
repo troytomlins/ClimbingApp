@@ -1,9 +1,10 @@
 package com.example.climbingapp.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.climbingapp.init.ClimbInit
-import com.example.climbingapp.model.session.Climb
-import com.example.climbingapp.model.session.Session
+import com.example.climbingapp.data.Gym
+import com.example.climbingapp.model.climbs.Location
+import com.example.climbingapp.ui.session.ActiveSession
+import com.example.climbingapp.ui.session.Climb
 import com.example.climbingapp.ui.session.SessionUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,8 +12,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlin.math.roundToInt
 
 class SessionViewModel: ViewModel() {
-    private var gym = ClimbInit().setUpGymData()
-    private var activeSession = Session(gym)
+    private var gym = Gym(
+        location = Location("CHCH","NZ"),
+        name = "Y Adventure Centre",
+        gymCode = "YAC"
+    )
+    private var activeSession = ActiveSession()
 
     private var active: Boolean = false
 
@@ -22,9 +27,9 @@ class SessionViewModel: ViewModel() {
     /**
      * Sets up active session
      */
-    fun setUpSession(session: Session): SessionViewModel {
+    fun setUpSession(session: ActiveSession): SessionViewModel {
         activeSession = session
-        gym = session.gym
+        gym = gym
         resetUi()
         active = true
         return this
@@ -39,21 +44,7 @@ class SessionViewModel: ViewModel() {
         uiState.value.attempted = getNumClimbsAttempted()
         uiState.value.completed = getNumClimbsCompleted()
         uiState.value.highestGrade = getHighestGradeInSession()
-        uiState.value.lastClimb = getPreviousClimbDisplayString()
-    }
-
-    /**
-     * Add a new climb to session and updates the UI
-     */
-    fun addClimbToSession(climb: Climb) {
-        activeSession.addClimbToSession(climb)
-        _uiState.value.attempted += 1
-        if (climb.sent) {
-            _uiState.value.completed += 1
-            _uiState.value.averageGrade = calculateAverageGrade()
-            _uiState.value.highestGrade = activeSession.getHighestGradeInSession()
-        }
-        _uiState.value.lastClimb = climb.display()
+        uiState.value.lastClimb = getLastClimb()
     }
 
     /**
@@ -61,7 +52,7 @@ class SessionViewModel: ViewModel() {
      * @return Highest grade in session
      */
     private fun getHighestGradeInSession(): Int {
-        return activeSession.getHighestGradeInSession()
+        return activeSession.getHighestGrade()
     }
 
     /**
@@ -69,7 +60,7 @@ class SessionViewModel: ViewModel() {
      * @return No. of Climbs attempted
      */
     private fun getNumClimbsAttempted(): Int {
-        return activeSession.getClimbsInSession().size
+        return activeSession.getClimbs().size
     }
 
     /**
@@ -78,7 +69,7 @@ class SessionViewModel: ViewModel() {
      */
     private fun getNumClimbsCompleted(): Int {
         var count = 0
-        activeSession.getClimbsInSession().forEach {
+        activeSession.getClimbs().forEach {
             if (it.sent) {
                 count += 1
             }
@@ -92,12 +83,12 @@ class SessionViewModel: ViewModel() {
      * @return Average grade
      */
     private fun calculateAverageGrade(): Int {
-        if (activeSession.getClimbsInSession().size == 0) {
+        if (activeSession.getClimbs().size == 0) {
             return 0
         }
         var count = 0.00
         var total = 0.00
-        activeSession.getClimbsInSession().forEach {
+        activeSession.getClimbs().forEach {
             if (it.sent) {
                 count += 1
                 total += it.route.grade
@@ -106,11 +97,8 @@ class SessionViewModel: ViewModel() {
         return (total / count).roundToInt()
     }
 
-    private fun getPreviousClimbDisplayString(): String {
-        if (activeSession.getClimbsInSession().size == 0) {
-            return ""
-        }
-        return activeSession.getClimbsInSession().last().display()
+    private fun getLastClimb() : Climb {
+        return activeSession.getClimbs().last()
     }
 
     /**

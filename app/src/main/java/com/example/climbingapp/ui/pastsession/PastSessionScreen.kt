@@ -14,51 +14,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.climbingapp.init.ClimbInit
+import com.example.climbingapp.ui.session.ActiveSession
+import com.example.climbingapp.ui.session.Climb
+import com.example.climbingapp.ui.session.Route
 import com.example.climbingapp.ui.session.SessionDisplay
+import com.example.climbingapp.ui.session.SessionUiState
 import com.example.climbingapp.viewmodel.PastSessionUiStatus
+import kotlin.random.Random
 
 @Composable
 fun PastSessionScreen(
-    uiState: PastSessionUiState,
-    uiStatus: PastSessionUiStatus,
+    uiState: SessionUiState,
     returnToPastSessions: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    when (uiStatus) {
-        is PastSessionUiStatus.Loading -> null // TODO: Add loading screen
-        is PastSessionUiStatus.Success -> {
-            uiState.setActiveSession(uiStatus.pastSession)
-            PastSessionScreenContent(
-                uiState,
-                returnToPastSessions,
-                modifier
-            )
-        }
-        is PastSessionUiStatus.Error -> {
-            uiState.activeSession = null
-            returnToPastSessions()
-        }
+    if(uiState.attempted == 0) {
+        returnToPastSessions()
+    } else {
+        PastSessionScreenContent(
+            uiState = uiState,
+            returnToPastSessions = returnToPastSessions,
+            modifier = modifier
+        )
     }
 }
 @Composable
 fun PastSessionScreenContent(
-    uiState: PastSessionUiState,
+    uiState: SessionUiState,
     returnToPastSessions: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if(uiState.activeSession == null) {
+    if(uiState == null) {
         returnToPastSessions()
     } else {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
         ) {
-            uiState.convertToSessionUiState()?.let {
-                SessionDisplay(sessionUiState = it, Modifier)
-            }
+            SessionDisplay(sessionUiState = uiState, modifier)
             Row(
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .padding(16.dp),
                 horizontalArrangement = Arrangement.Start
             ) {
@@ -73,9 +69,31 @@ fun PastSessionScreenContent(
 @Preview
 @Composable
 fun PastSessionPreview() {
-    val session = ClimbInit().setUpSession()
-    val uiState = PastSessionUiState(
-        activeSession = session
+    val colors = mutableListOf<String>()
+    colors.add("Yellow")
+    colors.add("Black")
+    colors.add("Blue")
+    colors.add("Red")
+    colors.add("Orange")
+
+    val session = ActiveSession()
+    var i = 0
+    while (i < Random.nextInt(3,15) ) {
+        session.addClimb(
+            Climb(
+                route = Route(
+                    Random.nextInt(),
+                    "Route Name",
+                    Random.nextInt(),
+                    color = colors[Random.nextInt(0, colors.size)]
+                )
+            )
+        )
+        i += 1
+    }
+    val uiState = SessionUiState(
+        session.getClimbs().size
     )
-    PastSessionScreen(uiState, PastSessionUiStatus.Success(session), {}, Modifier.background(Color.White))
+    PastSessionScreen(uiState, {}, Modifier.background(Color.White))
 }
+

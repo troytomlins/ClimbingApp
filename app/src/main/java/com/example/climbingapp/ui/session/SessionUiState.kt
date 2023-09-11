@@ -8,5 +8,5 @@ data class SessionUiState(
     var completed: Int = 0,
     var highestGrade: Int = 0,
     var averageGrade: Int = 0,
-    var lastClimb: String = ""
+    var lastClimb: Climb? = null
 )

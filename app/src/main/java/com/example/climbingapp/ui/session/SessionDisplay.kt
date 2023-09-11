@@ -3,19 +3,12 @@ package com.example.climbingapp.ui.session
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.climbingapp.init.ClimbInit
-import com.example.climbingapp.model.climbs.Gym
-import com.example.climbingapp.model.climbs.Location
-import com.example.climbingapp.model.session.Session
 import com.example.climbingapp.ui.theme.ClimbingAppTheme
-import com.example.climbingapp.viewmodel.SessionViewModel
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 /**
@@ -42,12 +35,15 @@ fun SessionDisplay(sessionUiState: SessionUiState, modifier: Modifier = Modifier
 @Preview
 fun SessionPreview() {
     ClimbingAppTheme {
+        val route = Route(grade = Random.nextInt(16,19), color = "Yellow")
+        val climb = Climb(route = route)
         SessionDisplay(
             SessionUiState(
                 attempted = Random.nextInt(10, 12),
                 completed = Random.nextInt(8,10),
                 highestGrade = Random.nextInt(19, 25),
-                averageGrade = Random.nextInt(16, 19)
+                averageGrade = Random.nextInt(16, 19),
+                lastClimb = climb
             ),
             Modifier.background(Color.White)
         )

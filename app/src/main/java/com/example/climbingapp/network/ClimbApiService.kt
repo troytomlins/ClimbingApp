@@ -1,8 +1,8 @@
 package com.example.climbingapp.network
 
-import com.example.climbingapp.model.climbs.Gym
-import com.example.climbingapp.model.session.Climb
-import com.example.climbingapp.model.session.Session
+import com.example.climbingapp.data.Gym
+import com.example.climbingapp.data.Climb
+import com.example.climbingapp.data.session.Session
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType

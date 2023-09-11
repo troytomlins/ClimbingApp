@@ -39,17 +39,14 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.climbingapp.init.ClimbInit
-import com.example.climbingapp.model.session.Session
 import com.example.climbingapp.ui.pastsession.PastSessionsScreen
-import com.example.climbingapp.ui.session.CurrentSessionScreen
+import com.example.climbingapp.ui.session.ActiveSession
+import com.example.climbingapp.ui.session.SessionScreen
 import com.example.climbingapp.ui.session.StartSessionScreen
-import com.example.climbingapp.viewmodel.PastSessionUiStatus
-import com.example.climbingapp.viewmodel.PastSessionViewModel
 import com.example.climbingapp.viewmodel.ProfileViewModel
 import com.example.climbingapp.viewmodel.SessionViewModel
 
-val TESTING = true
+const val TESTING = false
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,17 +71,6 @@ fun ClimbingApp(
     navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier
 ) {
-
-    val sessionViewModel: SessionViewModel = viewModel()
-    val profileViewModel: ProfileViewModel = viewModel()
-    val pastSessionViewModel: PastSessionViewModel = viewModel()
-
-    if (TESTING) {
-        pastSessionViewModel.setUpTestData()
-    } else {
-        pastSessionViewModel.getPastSessionData()
-    }
-
     Scaffold(
         topBar = {
             ClimbingAppBar(modifier)
@@ -95,11 +81,7 @@ fun ClimbingApp(
                     navController.navigate(route = ClimbingAppScreen.PastSessions.name)
                 },
                 onNavHomePress = {
-                    if (sessionViewModel.isActive()) {
-                        navController.navigate(route = ClimbingAppScreen.CurrentSession.name)
-                    } else {
-                        navController.navigate(route = ClimbingAppScreen.StartSession.name)
-                    }
+                    navController.navigate(route = ClimbingAppScreen.StartSession.name)
                 },
                 onNavProfilePress = {
                     navController.navigate(route = ClimbingAppScreen.Profile.name)
@@ -108,8 +90,6 @@ fun ClimbingApp(
             )
         }
     ) { contentPadding ->
-        val sessionUiState by sessionViewModel.uiState.collectAsState()
-        val pastSessionUiState by pastSessionViewModel.uiState.collectAsState()
 
         NavHost(
             navController = navController,
@@ -120,12 +100,6 @@ fun ClimbingApp(
             composable(route = ClimbingAppScreen.StartSession.name) {
                 StartSessionScreen(
                     onStart = {
-                        var newSession: Session = if (TESTING) {
-                            ClimbInit().setUpSession() // full session
-                        } else {
-                            Session(ClimbInit().setUpGymData()) // empty session
-                        }
-                        sessionViewModel.setUpSession(newSession)
                         navController.navigate(route = ClimbingAppScreen.CurrentSession.name)
                     }
                 )
@@ -133,13 +107,11 @@ fun ClimbingApp(
 
             // Current Session Screen
             composable(route = ClimbingAppScreen.CurrentSession.name) {
-                CurrentSessionScreen(
-                    sessionUiState = sessionUiState,
+                SessionScreen(
                     addClimb = {
                         navController.navigate(route = ClimbingAppScreen.AddClimb.name)
                     },
-                    endSession = {
-                        sessionViewModel.endSession()
+                    leaveSession = {
                         navController.navigate(route = ClimbingAppScreen.StartSession.name)
                     })
             }
@@ -152,16 +124,9 @@ fun ClimbingApp(
 
             // Past Sessions Screen
             composable(route = ClimbingAppScreen.PastSessions.name) {
-                PastSessionsScreen(
-                    uiState = pastSessionUiState,
-                    uiStatus = PastSessionUiStatus.Loading
-                )
+                PastSessionsScreen()
             }
 
-            // Display Completed(past) Session ?????????????? like above?
-            composable(route = ClimbingAppScreen.CompletedSession.name) {
-
-            }
 
             // User Profile
             composable(route = ClimbingAppScreen.Profile.name) {
@@ -182,7 +147,6 @@ enum class ClimbingAppScreen(@StringRes val title: Int) {
     CurrentSession(title = R.string.current_session),
     AddClimb(title = R.string.add_climb),
     PastSessions(title = R.string.past_sessions),
-    CompletedSession(title = R.string.completed_session),
     Profile(title = R.string.user_profile),
     GymProfile(title = R.string.gym_profile)
 }

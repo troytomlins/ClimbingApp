@@ -1,5 +1,7 @@
 package com.example.climbingapp.model.session
 
+import com.example.climbingapp.data.session.Session
+
 class PastSessions(
     var sessions: MutableList<Session> = mutableListOf()
 ) {
